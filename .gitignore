@@ -1,0 +1,14 @@
+# RStudio / R temporary files
+.Rhistory
+.RData
+.Rproj.user/
+.Ruserdata
+*.Rproj
+.DS_Store
+
+# Build artifacts
+.Rcheck/
+packrat/
+renv/library/
+renv/staging/
+.Renv
