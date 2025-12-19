@@ -1,4 +1,3 @@
-
 # BayeSRank
 
 **BayeSRank** is an R implementation of a bias-aware Bayesian rank aggregation framework designed for settings with peer- and self-evaluations.\
@@ -10,14 +9,14 @@ This repository contains the full implementation of the Gibbs sampler, data-gene
 
 ## Repository Structure
 
-- `R/`
-  - `utils.R` — Rank-format conversions and initialization helpers
-  - `BayeSRank_core.R` — BayeSRank Gibbs sampler and two-step tuning
-  - `distributions.R` — Inverse-gamma and distribution utilities
-  - `data_generation.R` — Simulation data generators
-  - `metrics.R` — Ranking accuracy metrics (Top-1, Top-3)
-- `BayeSRank.Rproj`
-- `README.md`
+-   `R/`
+    -   `utils.R` — Rank-format conversions and initialization helpers
+    -   `BayeSRank_core.R` — BayeSRank Gibbs sampler and two-step tuning
+    -   `distributions.R` — Inverse-gamma and distribution utilities
+    -   `data_generation.R` — Simulation data generators
+    -   `metrics.R` — Ranking accuracy metrics (Top-1, Top-3)
+-   `BayeSRank.Rproj`
+-   `README.md`
 
 ### Bayesian Rank Aggregation
 
@@ -43,14 +42,15 @@ Each generator simulates latent utilities, converts them to observed ranks, and 
 
 ### Evaluation Metrics
 
--   Top-1 and Top-3 accuracy\
--   Absolute and squared rank distance measures
+-   Top-1 and Top-3 accuracy
 
 ------------------------------------------------------------------------
 
 ## Example Usage
 
-\`\`\`r source("R/BayeSRank-core.R") source("R/data_generation.R")
+\`\`\`r 
+source("R/BayeSRank-core.R") 
+source("R/data_generation.R")
 
 set.seed(123)
 
