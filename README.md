@@ -12,7 +12,6 @@ This repository contains the full implementation of the Gibbs sampler, data-gene
 -   `R/`
     -   `utils.R` — Rank-format conversions and initialization helpers
     -   `BayeSRank_core.R` — BayeSRank Gibbs sampler and two-step tuning
-    -   `distributions.R` — Inverse-gamma and distribution utilities
     -   `data_generation.R` — Simulation data generators
     -   `metrics.R` — Ranking accuracy metrics (Top-1, Top-3)
 -   `BayeSRank.Rproj`

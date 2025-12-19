@@ -67,3 +67,19 @@ find_sigmas <- function(rho, perc_bias =0.5, randomRho=FALSE){
   return(list(sig2_beta=sig2_beta,
               sig2_eps=sig2_eps))
 }
+
+
+# Function to estimate a and b parameters of an Inverse Gamma distribution
+
+find_shape_rate <- function(mean, sd){ #for Inverse-Gamma
+  
+  var <- sd^2
+  alpha <- (mean^2) / var + 2
+  
+  # Calculate beta using the formula for mean
+  beta <- mean * (alpha - 1)
+  
+  return(list(shape = alpha, rate = beta))
+  
+}
+
