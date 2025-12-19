@@ -14,17 +14,7 @@ and evaluation metrics reported in the accompanying manuscript.
 
 ## Repository Structure
 
-BayeSRank/
-├─ R/
-│ ├─ utils.R # Rank-format conversions, initialization helpers, variance utilities
-│ ├─ BayeSRank_core.R # BayeSRank Gibbs sampler and two-step tuning procedure
-│ ├─ distributions.R # Inverse-gamma and distributional helper functions
-│ ├─ data_generation.R # Simulation data generators under multiple latent distributions
-│ └─ metrics.R # Ranking accuracy metrics (Top-1, Top-3)
-├─ BayeSRank.Rproj
-└─ README.md
 
-Copy code
 
 ---
 ## Method Overview
