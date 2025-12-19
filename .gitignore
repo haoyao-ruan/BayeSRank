@@ -5,6 +5,8 @@
 .Ruserdata
 *.Rproj
 .DS_Store
+# RStudio temporary files
+.Rapp.history
 
 # Build artifacts
 .Rcheck/
