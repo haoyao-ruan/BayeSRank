@@ -99,14 +99,9 @@ gen_data_t <- function(
 }
 
 
-<<<<<<< HEAD
 gen_data_gamma <- function(
     n = 5,   # number of teams
     kappa=5, # shape parameter 
-=======
-gen_data_absnorm <- function(
-    n = 5,   # number of teams
->>>>>>> ce814e9c9462ffaba46b206a018434cd13e3b7fc
     mu_beta,
     sigma_beta,
     sigma_epsilon
@@ -116,11 +111,8 @@ gen_data_absnorm <- function(
   
   while (regenerate) {
     # Generate data
-<<<<<<< HEAD
+
     mu <- rgamma(n, shape = kappa, rate = sqrt(kappa))# Global team effects
-=======
-    mu <- abs(rnorm(n, mean = 0, sd = 1) ) # Global team effects
->>>>>>> ce814e9c9462ffaba46b206a018434cd13e3b7fc
     true_rank <- rank(-mu)
     
     beta <- rnorm(n, mean = mu_beta, sd = sigma_beta)

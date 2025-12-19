@@ -28,16 +28,16 @@ This repository contains the full implementation of the Gibbs sampler, data-gene
 
 ### Data Generation (Simulations)
 
--   **`gen_data_dir()`** — Normal latent effects\
--   **`gen_data_t()`** — Heavy-tailed (t-distributed) latent effects\
+-   **`gen_data_dir()`** — Normal latent effects
+-   **`gen_data_t()`** — Heavy-tailed (t-distributed) latent effects
 -   **`gen_data_gamma()`** — Skewed positive latent effects
 
 Each generator simulates latent utilities, converts them to observed ranks, and regenerates data if rankings are degenerate.
 
 ### Rank Utilities and Diagnostics
 
--   Conversion between rank matrices, ordinal lists, and numeric rankings\
--   Diagnostics comparing self-ranks to peer-based ranks\
+-   Conversion between rank matrices, ordinal lists, and numeric rankings
+-   Diagnostics comparing self-ranks to peer-based ranks
 -   Initialization routines for latent utility matrices
 
 ### Evaluation Metrics
@@ -49,14 +49,17 @@ Each generator simulates latent utilities, converts them to observed ranks, and 
 ## Example Usage
 
 \`\`\`r 
-source("R/BayeSRank-core.R") 
+source("R/BayeSRank_core.R") 
 source("R/data_generation.R")
+source("R/utils.R")
+source("R/metrics.R")
 
-set.seed(123)
+set.seed(42)
 
-dat \<- gen_data_dir( n = 5, mu_beta = 0.3, sigma_beta = 0.5, sigma_epsilon = 1 )
+dat \<- gen_data_dir( n = 15, mu_beta = 0.3, sigma_beta = 0.5, sigma_epsilon = 1 )
 
-res \<- BayeSRank( n = 5, r = dat\$rank, M = 3000, burnin = 1000, W = matrix(rnorm(25), 5, 5), mu0 = rep(0, 5), mubeta0 = 0, beta0 = rep(0, 5), Var_beta0 = 1, Var_epsilon0 = 1, minbeta = -3, maxbeta = 3, a = 2, b = 2, c = 2, d = 2 )
+res \<- BayeSRank_2step( n = 5, r = dat\$rank, true_rank = dat\$true_rank)
 
 res$post_mean_mus
 res$corr_spearman
+\`\`\`

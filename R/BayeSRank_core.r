@@ -2,8 +2,8 @@
 # Two–step BayesRank 
 # ──────────────────────────────────────────────────────────────────────────────
 bayesrank_2step <- function(rank_matrix,
-                            M_itrns      = 2000,
-                            m_burn       = 1000,
+                            M_itrns      = 5000,
+                            m_burn       = 2500,
                             init_W       = NULL,
                             # ↓ optional pilot‑stage hyper‑priors
                             step1_minbeta      = -100,
@@ -73,7 +73,7 @@ bayesrank_2step <- function(rank_matrix,
                    burnin = m_burn,
                    W = initW,
                    mu0         = rnorm(n_teams, 0, 1),
-                   mubeta0     = rnorm(1, 0, 1),
+                   mubeta0     = Beta.bar,
                    Var_beta0   = varBeta_est,
                    Var_epsilon0= varEpsilon_est,
                    minbeta     = minBeta_est,
@@ -91,18 +91,22 @@ bayesrank_2step <- function(rank_matrix,
 ## --------------------------------------------------------------------------
 ## BayeSRank function
 ## --------------------------------------------------------------------------
-BayeSRank <- function(n, 
-                      r,
-                      M,
-                      burnin, 
-                      W,             # W=initial Omega matrix
-                      mu0,
-                      mubeta0,
-                      beta0,
-                      Var_beta0,
-                      Var_epsilon0, minbeta, maxbeta, 
-                      a,b,c,d
-){
+BayeSRank <- function(
+    n,
+    r,
+    true_rank = NULL,   # ← DEFAULT NULL
+    M,
+    burnin,
+    W,
+    mu0,
+    mubeta0,
+    beta0,
+    Var_beta0,
+    Var_epsilon0,
+    minbeta,
+    maxbeta,
+    a, b, c, d
+) {
   
   # Dimensions of the rank matrix
   N <- n  # Number of teams (rows of `r`)
@@ -206,15 +210,11 @@ BayeSRank <- function(n,
   
   drop = 1:burnin
   post.mean.mus <- apply(Mu[,-drop], 1, mean)
-  cor <- cor(rank(-post.mean.mus), true_rank, use = "everything", method="spearman")
   
   post.mean.betas <- apply(Beta[,-drop], 1, mean)
   
   post.mean.mu_beta <- mean(Mu_beta[,-drop])
   post.median.Var_beta <- median(Var_beta[,-drop])
-  
-  top1rate <- calculate_top1(ranked_list=rank(-post.mean.mus), true_list=true_rank)
-  top3rate <- calculate_top3(ranked_list=rank(-post.mean.mus), true_list=true_rank)
   
   out <- list(# Mu = Mu, 
     Beta = Beta[,-drop],
@@ -225,13 +225,7 @@ BayeSRank <- function(n,
     post_mean_mus = post.mean.mus,
     # post_mean_betas = post.mean.betas, 
     post_mean_mubeta = post.mean.mu_beta, 
-    post_median_Varbeta = post.median.Var_beta,
-    corr_spearman = cor,
-    top1rate=top1rate,
-    top3rate=top3rate
-    # post_rank = rank(-post.mean.mu),
-    # true_rank = true_rank,
-    # true_beta = mydat$true_beta
+    post_median_Varbeta = post.median.Var_beta
   )
   
   return(out)
