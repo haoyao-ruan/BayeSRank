@@ -24,22 +24,26 @@ BayeSRank/
 ├─ BayeSRank.Rproj
 └─ README.md
 
----
+Copy code
 
+---
 ## Method Overview
 
-Let  
-- $\mu_i$ denote the latent ability of item (team) $i$,  
-- $\beta_j$ denote the self-evaluation bias of rater $j$.
+Let
 
-Observed rankings are assumed to arise from latent continuous utilities of the form
-\[
-\omega_{ij} = \mu_i + \mathbb{1}(i=j)\beta_j + \varepsilon_{ij},
-\]
-where $\varepsilon_{ij}$ represents rater-specific noise.  
+- μᵢ denote the latent ability of item (team) i,
+- βⱼ denote the self-evaluation bias of rater j.
+
+Observed rankings are assumed to arise from latent continuous utilities of the form:
+
+ωᵢⱼ = μᵢ + 𝟙(i = j) · βⱼ + εᵢⱼ,
+
+where εᵢⱼ represents rater-specific noise.  
 Observed ranks correspond to the ordering of latent utilities within each rater.
 
-Posterior inference is performed via a Gibbs sampler with truncated normal updates that enforce rank-ordering constraints. The framework supports inference with or without self-evaluation information and allows flexible prior specification.
+Posterior inference is performed via a Gibbs sampler with truncated normal updates
+that enforce rank-ordering constraints. The framework supports inference with or
+without self-evaluation information and allows flexible prior specification.
 
 ---
 
