@@ -1,6 +1,6 @@
-# BayeSRank
+# BayeSPeer
 
-**BayeSRank** is an R implementation of a bias-aware Bayesian rank aggregation framework designed for settings with peer- and self-evaluations.\
+**BayeSPeer** is an R implementation of a bias-aware Bayesian rank aggregation framework designed for settings with peer- and self-evaluations.\
 The method explicitly models self-evaluation bias and uncertainty through a latent utility formulation, producing aggregated rankings with posterior uncertainty quantification.
 
 This repository contains the full implementation of the Gibbs sampler, data-generating mechanisms used in simulation studies, and evaluation metrics reported in the accompanying manuscript.
@@ -11,18 +11,18 @@ This repository contains the full implementation of the Gibbs sampler, data-gene
 
 -   `R/`
     -   `utils.R` — Rank-format conversions and initialization helpers
-    -   `BayeSRank_core.R` — BayeSRank Gibbs sampler and two-step tuning
+    -   `BayeSPeer_core.R` — BayeSPeer Gibbs sampler and two-step tuning
     -   `data_generation.R` — Simulation data generators
     -   `metrics.R` — Ranking accuracy metrics (Top-1, Top-3)
--   `BayeSRank.Rproj`
+-   `BayeSPeer.Rproj`
 -   `README.md`
 
 ### Bayesian Rank Aggregation
 
--   **`BayeSRank()`**\
+-   **`BayeSPeer()`**\
     Main Gibbs sampler returning posterior summaries, aggregated rankings, and accuracy metrics.
 
--   **`bayesrank_2step()`**\
+-   **`BayeSPeer_2step()`**\
     Two-stage procedure that first runs a pilot chain with diffuse hyperparameters to estimate scale parameters, then fits the final model using empirically tuned hyperpriors.
 
 ### Data Generation (Simulations)
@@ -48,7 +48,7 @@ Each generator simulates latent utilities, converts them to observed ranks, and 
 ## Example Usage
 
 \`\`\`r 
-source("R/BayeSRank_core.R") 
+source("R/BayeSPeer_core.R") 
 source("R/data_generation.R")
 source("R/utils.R")
 source("R/metrics.R")
@@ -57,7 +57,7 @@ set.seed(42)
 
 dat \<- gen_data_dir( n = 15, mu_beta = 0.3, sigma_beta = 0.5, sigma_epsilon = 1 )
 
-res \<- BayeSRank_2step( n = 5, r = dat\$rank, true_rank = dat\$true_rank)
+res \<- BayeSPeer_2step( n = 5, r = dat\$rank, true_rank = dat\$true_rank)
 
 res$post_mean_mus
 res$corr_spearman
