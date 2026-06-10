@@ -53,15 +53,17 @@ gen_data_t <- function(
     n = 5,   # number of teams
     mu_beta,
     sigma_beta,
-    sigma_epsilon
+    sigma_epsilon,
+    df=df
 ) {
   regenerate <- TRUE  # Flag to control regeneration loop
   result <- NULL
   
   while (regenerate) {
     # Generate data
-    df <- 5
-    mu <- rt(n, df = df) * sigma_beta / sqrt(df / (df - 2)) + mu_beta # Global team effects
+    unit_var_scale <- sqrt((df - 2) / df)
+    
+    mu <- rt(n, df = df) * unit_var_scale # Global team effects
     true_rank <- rank(-mu)
     
     beta <- rnorm(n, mean = mu_beta, sd = sigma_beta)
@@ -97,7 +99,6 @@ gen_data_t <- function(
   
   return(result)
 }
-
 
 gen_data_gamma <- function(
     n = 5,   # number of teams

@@ -1,64 +1,126 @@
 # BayeSRank
 
-**BayeSRank** is an R implementation of a bias-aware Bayesian rank aggregation framework designed for settings with peer- and self-evaluations.\
-The method explicitly models self-evaluation bias and uncertainty through a latent utility formulation, producing aggregated rankings with posterior uncertainty quantification.
+**BayeSRank** is an R implementation of **BayeSPeer**, a bias-aware Bayesian
+rank-aggregation framework for settings with peer- and self-evaluations.
+The method explicitly models self-evaluation bias and uncertainty through a
+latent-utility formulation, producing aggregated rankings with posterior
+uncertainty quantification.
 
-This repository contains the full implementation of the Gibbs sampler, data-generating mechanisms used in simulation studies, and evaluation metrics reported in the accompanying manuscript.
+It accompanies the manuscript *"Bias Meets Bayes: Bayesian Aggregation for Peer
+and Self Ranking."* The repository provides the Gibbs sampler, the
+data-generating mechanisms used in the simulation studies, the evaluation
+metrics, and the scripts that reproduce the simulation results and figures.
 
-------------------------------------------------------------------------
+---
 
-## Repository Structure
+## Repository structure
 
--   `R/`
-    -   `utils.R` — Rank-format conversions and initialization helpers
-    -   `BayeSRank_core.R` — BayeSRank Gibbs sampler and two-step tuning
-    -   `data_generation.R` — Simulation data generators
-    -   `metrics.R` — Ranking accuracy metrics (Top-1, Top-3)
--   `BayeSRank.Rproj`
--   `README.md`
+```
+BayeSRank/
+├── R/                         # Core method API
+│   ├── utils.R                #   rank-format conversions, init & tuning helpers
+│   ├── data_generation.R      #   synthetic data generators
+│   ├── metrics.R              #   Top-1 / Top-3 accuracy
+│   └── BayeSRank_core.r       #   BayeSRank() sampler + bayesrank_2step() wrapper
+├── examples/
+│   └── example_synthetic.R    # runnable end-to-end demo on simulated data
+├── analysis/                  # Scripts to reproduce the simulation studies
+│   ├── functions/             #   full function library + competing methods
+│   ├── 01_simulate_data/      #   generate simulated data sets
+│   ├── 02_run_methods/        #   run BayeSPeer + competitors (parallel)
+│   ├── 03_process_results/    #   tidy the raw result objects
+│   ├── 04_figures/            #   produce manuscript figures
+│   └── README.md              #   reproduction guide
+├── BayeSRank.Rproj
+├── .gitignore
+└── README.md
+```
 
-### Bayesian Rank Aggregation
+> **Note on file names.** The core file is `R/BayeSRank_core.r` (lower-case
+> `.r`). On case-sensitive systems use that exact name in `source()`.
 
--   **`BayeSRank()`**\
-    Main Gibbs sampler returning posterior summaries, aggregated rankings, and accuracy metrics.
+---
 
--   **`bayesrank_2step()`**\
-    Two-stage procedure that first runs a pilot chain with diffuse hyperparameters to estimate scale parameters, then fits the final model using empirically tuned hyperpriors.
+## Core API (`R/`)
 
-### Data Generation (Simulations)
+### Bayesian rank aggregation
+- **`BayeSRank()`** — main Gibbs sampler; returns posterior summaries of the
+  latent performance scores, self-evaluation bias, and variance components.
+- **`bayesrank_2step()`** — two-stage procedure that first runs a pilot chain
+  with diffuse hyper-priors to estimate scale parameters, then fits the final
+  model with empirically tuned hyper-priors.
 
--   **`gen_data_dir()`** — Normal latent effects
--   **`gen_data_t()`** — Heavy-tailed (t-distributed) latent effects
--   **`gen_data_gamma()`** — Skewed positive latent effects
+### Data generation (simulations)
+- **`gen_data_dir()`** — Normal latent effects
+- **`gen_data_t()`** — heavy-tailed (t-distributed) latent effects
+- **`gen_data_gamma()`** — skewed positive latent effects
 
-Each generator simulates latent utilities, converts them to observed ranks, and regenerates data if rankings are degenerate.
+Each generator simulates latent utilities, converts them to observed ranks, and
+regenerates data if the resulting rankings are degenerate.
 
-### Rank Utilities and Diagnostics
+### Rank utilities & evaluation
+- Conversion between rank matrices, ordinal lists, and numeric rankings
+- Self-rank vs. peer-rank diagnostics; latent-utility initialization
+- Top-1 and Top-3 accuracy metrics
 
--   Conversion between rank matrices, ordinal lists, and numeric rankings
--   Diagnostics comparing self-ranks to peer-based ranks
--   Initialization routines for latent utility matrices
+---
 
-### Evaluation Metrics
+## Quick start
 
--   Top-1 and Top-3 accuracy
-
-------------------------------------------------------------------------
-
-## Example Usage
-
-\`\`\`r 
-source("R/BayeSRank_core.R") 
-source("R/data_generation.R")
+```r
 source("R/utils.R")
+source("R/data_generation.R")
 source("R/metrics.R")
+source("R/BayeSRank_core.r")
 
 set.seed(42)
 
-dat \<- gen_data_dir( n = 15, mu_beta = 0.3, sigma_beta = 0.5, sigma_epsilon = 1 )
+# Simulate a small peer/self ranking data set
+dat <- gen_data_dir(n = 8, mu_beta = 1.0, sigma_beta = sqrt(0.5), sigma_epsilon = 1.0)
 
-res \<- BayeSRank_2step( n = 5, r = dat\$rank, true_rank = dat\$true_rank)
+# Fit BayeSRank with the two-step tuned procedure
+res <- bayesrank_2step(rank_matrix = dat$rank, M_itrns = 2000, m_burn = 1000, seed = 42)
 
-res$post_mean_mus
-res$corr_spearman
-\`\`\`
+res$post_mean_mus                     # posterior mean latent scores
+agg_rank <- rank(-res$post_mean_mus)  # aggregated ranking (rank 1 = best)
+
+calculate_top1(agg_rank, dat$true_rank)
+calculate_top3(agg_rank, dat$true_rank)
+```
+
+A fuller, commented version of this is in
+[`examples/example_synthetic.R`](examples/example_synthetic.R).
+
+---
+
+## Dependencies
+
+Core API: `MCMCpack`, `extraDistr`, `matrixStats`.
+Reproducibility scripts additionally use: `data.table`, `doParallel`,
+`foreach`, `progressr`, `RobustRankAggreg`, `TopKLists`, `tidyverse`,
+`patchwork`, `scales`.
+
+```r
+install.packages(c(
+  "MCMCpack", "extraDistr", "matrixStats", "data.table", "doParallel",
+  "foreach", "progressr", "RobustRankAggreg", "TopKLists", "tidyverse",
+  "patchwork", "scales"
+))
+```
+
+---
+
+## Reproducing the simulation studies
+
+See [`analysis/README.md`](analysis/README.md) for the full pipeline. In short:
+generate data (`01_simulate_data/`), run the methods (`02_run_methods/`),
+process the results (`03_process_results/`), and build the figures
+(`04_figures/`). The large intermediate `.RData` result objects are not tracked
+in version control and are regenerated by stages 01–02.
+
+## Data & privacy
+
+No real data is distributed with this repository. The manuscript's real-world
+classroom application relies on identifiable student grade and peer-ranking
+records, which are **not** included here for privacy reasons. All code shipped
+in this repository runs on fully synthetic, simulated data.

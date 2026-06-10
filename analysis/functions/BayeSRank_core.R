@@ -202,7 +202,7 @@ bayesrank <- function(
           
         }
         W[i,j] <- truncnorm::rtruncnorm(1, a = lower, b = upper,
-                                        mean = Mu[i, m] + Beta[j,m]*(i==j),
+                                        mean = Mu[i, m] + Beta[j]*(i==j),
                                         sd = sqrt( Var_epsilon[j, m] ))
       }
     }
