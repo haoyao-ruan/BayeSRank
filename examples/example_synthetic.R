@@ -9,10 +9,8 @@
 source("R/utils.R")            # rank-format conversions, init & tuning helpers
 source("R/data_generation.R")  # synthetic data generators
 source("R/metrics.R")          # Top-1 / Top-3 accuracy
-source("R/BayeSRank_core.R")   # BayeSRank() sampler + bayesrank_2step() wrapper
-# NOTE: the core file ships as BayeSRank_core.r (lower-case extension). On
-# case-sensitive systems (Linux/GitHub Actions) use the exact name:
-# source("R/BayeSRank_core.r")
+source("R/BayeSRank_core.r")   # BayeSRank() sampler + bayesrank_2step() wrapper
+# (note the lower-case .r extension; use this exact name on case-sensitive systems)
 
 set.seed(42)
 
