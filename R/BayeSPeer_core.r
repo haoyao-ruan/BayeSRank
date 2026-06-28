@@ -1,7 +1,7 @@
 # ──────────────────────────────────────────────────────────────────────────────
-# Two–step BayesRank 
+# Two–step BayeSPeer 
 # ──────────────────────────────────────────────────────────────────────────────
-bayesrank_2step <- function(rank_matrix,
+bayespeer_2step <- function(rank_matrix,
                             M_itrns      = 2000,
                             m_burn       = 1000,
                             init_W       = NULL,
@@ -37,7 +37,7 @@ bayesrank_2step <- function(rank_matrix,
   ## --------------------------------------------------------------------------
   ## 1.  Preliminary chain with weak / diffuse priors
   ## --------------------------------------------------------------------------
-  prelim <- bayesrank(n = n_teams,
+  prelim <- bayespeer(n = n_teams,
                       r = rank_matrix,
                       M = 2000,
                       burnin = 1000,
@@ -68,7 +68,7 @@ bayesrank_2step <- function(rank_matrix,
   ## --------------------------------------------------------------------------
   ## 2.  Main chain with tuned hyper‑priors
   ## --------------------------------------------------------------------------
-  res <- bayesrank(n = n_teams,
+  res <- bayespeer(n = n_teams,
                    r = rank_matrix,
                    M = M_itrns,
                    burnin = m_burn,
@@ -89,9 +89,9 @@ bayesrank_2step <- function(rank_matrix,
 }
 
 ## --------------------------------------------------------------------------
-## BayeSRank function
+## BayeSPeer function
 ## --------------------------------------------------------------------------
-bayesrank <- function(
+bayespeer <- function(
     n,
     r,
     true_rank = NULL,   # ← DEFAULT NULL
@@ -202,7 +202,7 @@ bayesrank <- function(
           
         }
         W[i,j] <- truncnorm::rtruncnorm(1, a = lower, b = upper,
-                                        mean = Mu[i, m] + Beta[j]*(i==j),
+                                        mean = Mu[i, m] + Beta[j,m]*(i==j),
                                         sd = sqrt( Var_epsilon[j, m] ))
       }
     }

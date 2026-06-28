@@ -1,5 +1,12 @@
+# ============================================================================
+# sampler_half_cauchy.R — Gibbs samplers with half-Cauchy priors
+# Half-Cauchy prior variant of the variance components.
+# Part of the BayeSPeer function library. Functions are moved verbatim from the
+# original 00_functions.R / method scripts; logic is unchanged.
+# ============================================================================
+
 #------------------Gibbs Sampler Preliminary-------------------
-BayeSRank.pre.HC <- function(n, r, M, burnin, 
+BayeSPeer.pre.HC <- function(n, r, M, burnin, 
                              W,
                              mu0,
                              mubeta0,
@@ -161,7 +168,7 @@ BayeSRank.pre.HC <- function(n, r, M, burnin,
 }
 
 #------------------Gibbs Sampler Simulation only report estimates-------------
-BayeSRank.HC <- function(n, r, M, burnin, 
+BayeSPeer.HC <- function(n, r, M, burnin, 
                              W,
                              mu0,
                              mubeta0,

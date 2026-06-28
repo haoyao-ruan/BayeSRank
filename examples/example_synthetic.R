@@ -1,5 +1,5 @@
 # ============================================================================
-# BayeSRank / BayeSPeer - minimal synthetic example
+# BayeSPeer - minimal synthetic example
 # ----------------------------------------------------------------------------
 # A fully self-contained demo that uses only simulated data (no real student
 # records). Run this from the repository root.
@@ -9,7 +9,7 @@
 source("R/utils.R")            # rank-format conversions, init & tuning helpers
 source("R/data_generation.R")  # synthetic data generators
 source("R/metrics.R")          # Top-1 / Top-3 accuracy
-source("R/BayeSRank_core.r")   # BayeSRank() sampler + bayesrank_2step() wrapper
+source("R/BayeSPeer_core.r")   # BayeSPeer() sampler + bayespeer_2step() wrapper
 # (note the lower-case .r extension; use this exact name on case-sensitive systems)
 
 set.seed(42)
@@ -30,8 +30,8 @@ dat <- gen_data_dir(
 # dat$true_rank : the ground-truth ranking used to generate the data
 print(dat$rank)
 
-# --- 2. Fit BayeSRank with the two-step (empirically tuned) procedure --------
-res <- bayesrank_2step(
+# --- 2. Fit BayeSPeer with the two-step (empirically tuned) procedure --------
+res <- bayespeer_2step(
   rank_matrix = dat$rank,
   M_itrns     = 2000,   # total MCMC iterations
   m_burn      = 1000,   # burn-in
