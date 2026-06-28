@@ -7,31 +7,31 @@ latent-utility formulation, producing aggregated rankings with posterior
 uncertainty quantification.
 
 It accompanies the manuscript *"Bias Meets Bayes: Bayesian Aggregation for Peer
-and Self Ranking."* The repository provides the Gibbs sampler, the
-data-generating mechanisms used in the simulation studies, the evaluation
-metrics, and the scripts that reproduce the simulation results and figures.
+and Self Ranking."* This repository provides the Gibbs sampler, the
+data-generating mechanisms, the evaluation metrics, and the function library
+(including the competing aggregators) used in the study.
 
 ---
 
 ## Repository structure
 
 ```
-BayeSRank/
-├── R/                         # Core method API
-│   ├── utils.R                #   rank-format conversions, init & tuning helpers
-│   ├── data_generation.R      #   synthetic data generators
-│   ├── metrics.R              #   Top-1 / Top-3 accuracy
-│   └── BayeSRank_core.r       #   BayeSRank() sampler + bayesrank_2step() wrapper
+BayeSPeer/
+├── R/                          # Core method API (clean, user-facing)
+│   ├── utils.R                 #   rank-format conversions, init & tuning helpers
+│   ├── data_generation.R       #   synthetic data generators
+│   ├── metrics.R               #   Top-1 / Top-3 accuracy
+│   └── BayeSRank_core.r        #   BayeSRank() sampler + bayesrank_2step() wrapper
+├── analysis/
+│   └── functions/              # Full function library used in the study
+│       ├── 00_functions.R      #   combined sampler + helpers + competing-method wrappers
+│       ├── 00_half_cauchy.R    #   half-Cauchy prior variant of the sampler
+│       ├── BayeSRank_core.R    #   two-step BayeSRank wrapper
+│       ├── BIRRA.R             #   competing method: BIRRA
+│       └── biger.R             #   competing method: BiGER
 ├── examples/
-│   └── example_synthetic.R    # runnable end-to-end demo on simulated data
-├── analysis/                  # Scripts to reproduce the simulation studies
-│   ├── functions/             #   full function library + competing methods
-│   ├── 01_simulate_data/      #   generate simulated data sets
-│   ├── 02_run_methods/        #   run BayeSPeer + competitors (parallel)
-│   ├── 03_process_results/    #   tidy the raw result objects
-│   ├── 04_figures/            #   produce manuscript figures
-│   └── README.md              #   reproduction guide
-├── BayeSRank.Rproj
+│   └── example_synthetic.R     # runnable end-to-end demo on simulated data
+├── BayeSPeer.Rproj
 ├── .gitignore
 └── README.md
 ```
@@ -52,8 +52,8 @@ BayeSRank/
 
 ### Data generation (simulations)
 - **`gen_data_dir()`** — Normal latent effects
-- **`gen_data_t()`** — heavy-tailed (t-distributed) latent effects
-- **`gen_data_gamma()`** — skewed positive latent effects
+- **`gen_data_t()`** — heavy-tailed (t-distributed) latent effects, rescaled to unit variance
+- **`gen_data_gamma()`** — skewed positive latent effects (unit variance)
 
 Each generator simulates latent utilities, converts them to observed ranks, and
 regenerates data if the resulting rankings are degenerate.
@@ -88,35 +88,41 @@ calculate_top1(agg_rank, dat$true_rank)
 calculate_top3(agg_rank, dat$true_rank)
 ```
 
-A fuller, commented version of this is in
+A fuller, commented version is in
 [`examples/example_synthetic.R`](examples/example_synthetic.R).
+
+---
+
+## Function library (`analysis/functions/`)
+
+`R/` holds the clean, user-facing API. `analysis/functions/` holds the complete
+function library used in the study, including:
+
+- `00_functions.R` — the combined implementation (sampler, data generators,
+  metrics, and wrappers for the competing aggregators);
+- `00_half_cauchy.R` — a half-Cauchy prior variant of the variance components;
+- `BIRRA.R`, `biger.R` — the competing Bayesian aggregators (BIRRA, BiGER).
+
+These reproduce the method and its competitors; the simulation, processing, and
+figure scripts used to generate the manuscript's results are not distributed
+here.
 
 ---
 
 ## Dependencies
 
 Core API: `MCMCpack`, `extraDistr`, `matrixStats`.
-Reproducibility scripts additionally use: `data.table`, `doParallel`,
-`foreach`, `progressr`, `RobustRankAggreg`, `TopKLists`, `tidyverse`,
-`patchwork`, `scales`.
+Function library additionally uses: `expm`, `reshape2`, `tidyverse`,
+`TopKLists`, `RobustRankAggreg` (for the competing aggregators).
 
 ```r
 install.packages(c(
-  "MCMCpack", "extraDistr", "matrixStats", "data.table", "doParallel",
-  "foreach", "progressr", "RobustRankAggreg", "TopKLists", "tidyverse",
-  "patchwork", "scales"
+  "MCMCpack", "extraDistr", "matrixStats", "expm", "reshape2",
+  "tidyverse", "TopKLists", "RobustRankAggreg"
 ))
 ```
 
 ---
-
-## Reproducing the simulation studies
-
-See [`analysis/README.md`](analysis/README.md) for the full pipeline. In short:
-generate data (`01_simulate_data/`), run the methods (`02_run_methods/`),
-process the results (`03_process_results/`), and build the figures
-(`04_figures/`). The large intermediate `.RData` result objects are not tracked
-in version control and are regenerated by stages 01–02.
 
 ## Data & privacy
 
