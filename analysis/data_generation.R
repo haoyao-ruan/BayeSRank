@@ -1,8 +1,7 @@
 # ============================================================================
 # data_generation.R — synthetic data generators
 # gen_data_dir / gen_data_mix / gen_data_t / gen_data_gamma / gen_data_tri.
-# Part of the BayeSPeer function library. Functions are moved verbatim from the
-# original 00_functions.R / method scripts; logic is unchanged.
+# Part of the BayeSPeer function library; logic unchanged from the original implementation.
 # ============================================================================
 
 gen_data_dir <- function(

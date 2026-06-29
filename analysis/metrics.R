@@ -1,8 +1,7 @@
 # ============================================================================
 # metrics.R — ranking-accuracy metrics
 # Top-1 / Top-3 inclusion and rank-distance metrics.
-# Part of the BayeSPeer function library. Functions are moved verbatim from the
-# original 00_functions.R / method scripts; logic is unchanged.
+# Part of the BayeSPeer function library; logic unchanged from the original implementation.
 # ============================================================================
 
 calculate_top1 <- function(ranked_list, true_list){

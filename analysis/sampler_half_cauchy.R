@@ -1,8 +1,7 @@
 # ============================================================================
 # sampler_half_cauchy.R — Gibbs samplers with half-Cauchy priors
 # Half-Cauchy prior variant of the variance components.
-# Part of the BayeSPeer function library. Functions are moved verbatim from the
-# original 00_functions.R / method scripts; logic is unchanged.
+# Part of the BayeSPeer function library; logic unchanged from the original implementation.
 # ============================================================================
 
 #------------------Gibbs Sampler Preliminary-------------------

@@ -1,8 +1,7 @@
 # ============================================================================
 # utils.R — rank-format conversions, calculation & Inverse-Gamma helpers
 # Helpers shared by the samplers, data generators and metrics.
-# Part of the BayeSPeer function library. Functions are moved verbatim from the
-# original 00_functions.R / method scripts; logic is unchanged.
+# Part of the BayeSPeer function library; logic unchanged from the original implementation.
 # ============================================================================
 
 ## --- Rank-format conversions & self/peer diagnostics ----------------------

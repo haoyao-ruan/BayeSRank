@@ -27,9 +27,8 @@ BayeSPeer/
 │   ├── utils.R                 #   rank conversions, calculation & Inverse-Gamma helpers
 │   ├── data_generation.R       #   gen_data_dir / mix / t / gamma / tri
 │   ├── metrics.R               #   Top-1 / Top-3 + rank-distance metrics
-│   ├── sampler.R               #   Gibbs samplers (Inverse-Gamma priors)
+│   ├── bayespeer_core.r        #   Gibbs samplers + two-step EB wrapper (IG priors)
 │   ├── sampler_half_cauchy.R   #   half-Cauchy prior variant
-│   ├── two_step.R              #   two-step empirical-Bayes wrapper
 │   └── competing_methods.R     #   Borda family, BIRRA, BiGER
 ├── examples/
 │   └── example_synthetic.R     # runnable end-to-end demo on simulated data
@@ -104,9 +103,10 @@ verbatim from the original code, logic unchanged):
 - `dependencies.R` — loads the packages used by the library (source first);
 - `utils.R`, `data_generation.R`, `metrics.R` — shared helpers, the five data
   generators, and the accuracy/rank-distance metrics;
-- `sampler.R`, `sampler_half_cauchy.R` — the Gibbs samplers under Inverse-Gamma
-  and half-Cauchy priors;
-- `two_step.R` — the two-step empirical-Bayes wrapper `bayespeer_2step()`;
+- `bayespeer_core.r` — the Gibbs samplers under Inverse-Gamma priors
+  (`BayeSPeer.pre`, `BayeSPeer`) together with the `bayespeer()` sampler and the
+  two-step empirical-Bayes wrapper `bayespeer_2step()`;
+- `sampler_half_cauchy.R` — the half-Cauchy prior variant of the samplers;
 - `competing_methods.R` — the competing aggregators: the Borda-score family,
   BIRRA, and BiGER.
 

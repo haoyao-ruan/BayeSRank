@@ -1,8 +1,7 @@
 # ============================================================================
 # competing_methods.R — baseline / competing aggregators
 # Borda-score family, BIRRA and BiGER.
-# Part of the BayeSPeer function library. Functions are moved verbatim from the
-# original 00_functions.R / method scripts; logic is unchanged.
+# Part of the BayeSPeer function library; logic unchanged from the original implementation.
 # ============================================================================
 
 ## --- Borda-score aggregators (Mean / Geomean / Median / L2norm) ------------
