@@ -1,10 +1,14 @@
 # ============================================================================
 # competing_methods.R — baseline / competing aggregators
 # Borda-score family, BIRRA and BiGER.
-# Part of the BayeSPeer function library; logic unchanged from the original implementation.
+# Part of the BayeSPeer function library.
 # ============================================================================
 
 ## --- Borda-score aggregators (Mean / Geomean / Median / L2norm) ------------
+
+# Geometric mean (NA-aware); required by myBorda_scores() below.
+geo.mean <- function(x) exp(mean(log(x), na.rm = TRUE))
+
 myBorda_scores <- function(input, 
                            n,
                            marg=1, # apply to margin of = 1 rows or 2 columns 

@@ -1,7 +1,7 @@
 # ============================================================================
 # sampler_half_cauchy.R — Gibbs samplers with half-Cauchy priors
 # Half-Cauchy prior variant of the variance components.
-# Part of the BayeSPeer function library; logic unchanged from the original implementation.
+# Part of the BayeSPeer function library.
 # ============================================================================
 
 #------------------Gibbs Sampler Preliminary-------------------
@@ -52,7 +52,6 @@ BayeSPeer.pre.HC <- function(n, r, M, burnin,
       Mu[i, m] <- rnorm(1, mean = g / h, sd = sqrt(1 / h)) 
     }
     
-    Mu[, m] <- Mu[, m] - mean(Mu[, m])
     
     ## 2. Update Beta
     for (j in 1:J) {
@@ -111,15 +110,15 @@ BayeSPeer.pre.HC <- function(n, r, M, burnin,
     
     ## 6. Update W
     for (j in 1:J) {
-      for (i in 1:N) {
+      for (i in sample(N)) {   # random update order per sweep (Li et al., 2018)
         
         if (r[i, j] == 1) {
-          upper <- 100
+          upper <- Inf
           lower <- W[which(r[, j] == 2), j]
           
         } else if (r[i, j] == n) {
           upper <- W[which(r[, j] == n - 1), j]
-          lower <- -100
+          lower <- -Inf
           
         } else {
           lower <- W[which(r[, j] == r[i, j] + 1), j]
@@ -214,7 +213,6 @@ BayeSPeer.HC <- function(n, r, M, burnin,
       Mu[i, m] <- rnorm(1, mean = g / h, sd = sqrt(1 / h)) 
     }
     
-    Mu[, m] <- Mu[, m] - mean(Mu[, m])
     
     ## 2. Update Beta
     for (j in 1:J) {
@@ -273,15 +271,15 @@ BayeSPeer.HC <- function(n, r, M, burnin,
     
     ## 6. Update W
     for (j in 1:J) {
-      for (i in 1:N) {
+      for (i in sample(N)) {   # random update order per sweep (Li et al., 2018)
         
         if (r[i, j] == 1) {
-          upper <- 100
+          upper <- Inf
           lower <- W[which(r[, j] == 2), j]
           
         } else if (r[i, j] == n) {
           upper <- W[which(r[, j] == n - 1), j]
-          lower <- -100
+          lower <- -Inf
           
         } else {
           lower <- W[which(r[, j] == r[i, j] + 1), j]

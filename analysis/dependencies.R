@@ -1,7 +1,7 @@
 # ============================================================================
 # dependencies.R — package dependencies
 # Source this first; loads the packages used across the library.
-# Part of the BayeSPeer function library; logic unchanged from the original implementation.
+# Part of the BayeSPeer function library.
 # ============================================================================
 
 library(MCMCpack)

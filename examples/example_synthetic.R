@@ -5,12 +5,18 @@
 # records). Run this from the repository root.
 # ============================================================================
 
-# --- Load the core method API -----------------------------------------------
-source("R/utils.R")            # rank-format conversions, init & tuning helpers
-source("R/data_generation.R")  # synthetic data generators
-source("R/metrics.R")          # Top-1 / Top-3 accuracy
-source("R/BayeSPeer_core.r")   # BayeSPeer() sampler + bayespeer_2step() wrapper
-# (note the lower-case .r extension; use this exact name on case-sensitive systems)
+# --- Load the function library ----------------------------------------------
+# This demo needs only `matrixStats` attached; the samplers call
+# truncnorm:: directly, so `truncnorm` must be installed but not attached.
+# (The full library uses more packages - see analysis/dependencies.R.)
+library(matrixStats)
+
+source("analysis/utils.R")            # rank-format conversions, init & tuning helpers
+source("analysis/data_generation.R")  # synthetic data generators
+source("analysis/metrics.R")          # Top-1 / Top-3 accuracy
+source("analysis/bayespeer_core.r")   # Gibbs samplers + bayespeer_2step() wrapper
+# (note the lower-case file name and .r extension; use these exact names on
+# case-sensitive systems)
 
 set.seed(42)
 

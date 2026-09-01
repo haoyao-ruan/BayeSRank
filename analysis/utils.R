@@ -1,7 +1,7 @@
 # ============================================================================
 # utils.R — rank-format conversions, calculation & Inverse-Gamma helpers
 # Helpers shared by the samplers, data generators and metrics.
-# Part of the BayeSPeer function library; logic unchanged from the original implementation.
+# Part of the BayeSPeer function library.
 # ============================================================================
 
 ## --- Rank-format conversions & self/peer diagnostics ----------------------
@@ -22,7 +22,9 @@ rank_diff_self_vs_peers <- function(rank_mat) {
   diff2 <- peer_ranks - diag(rank_mat) 
   
   # keep row names (items) if they exist
-  if (!is.null(rownames(rank_mat))) names(diff) <- rownames(rank_mat)
+  if (!is.null(rownames(rank_mat))) {
+    names(diff1) <- names(diff2) <- rownames(rank_mat)
+  }
   
   return(list(meandiff=diff1, rankdiff=diff2, peer_means=peer_means, peer_ranks=peer_ranks))
 }
@@ -75,7 +77,7 @@ sort_matrix_columns <- function(n, r=mydat$rank) {
 find_sigmas <- function(rhos,n_teams, perc_bias =0.5, randomRho=FALSE){
   
   if (randomRho){
-    rhos = runif(n, 0.15, 0.95) 
+    rhos = runif(n_teams, 0.15, 0.95) 
   }
   
   sig2_beta =sig2_eps = (1/rhos^2 - 1)
@@ -92,7 +94,7 @@ Est_distBeta <- function(mat_rank=mydat$rank, n=n_teams
   (epsilon=(0.001)/n)  # Small offset
   
   # Generate the equally spaced sequence from epsilon to (1 - epsilon)
-  ( mapped_values <- seq(epsilon, 1 - epsilon, length.out = n_teams) )
+  ( mapped_values <- seq(epsilon, 1 - epsilon, length.out = n) )
   
   interval <- (1 - 2*epsilon)/(n-1)
   (sample_values <- rnorm(n, mean=mapped_values, sd=(interval/4)))

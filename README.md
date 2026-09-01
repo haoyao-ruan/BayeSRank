@@ -7,7 +7,7 @@ formulation, producing aggregated rankings with posterior uncertainty
 quantification.
 
 It accompanies the manuscript *"Bias Meets Bayes: Bayesian Aggregation for Peer
-and Self Ranking."* This repository provides the Gibbs sampler, the
+and Self Ranking."* This repository provides the Gibbs samplers, the
 data-generating mechanisms, the evaluation metrics, and the full function
 library (including the competing aggregators) used in the study.
 
@@ -17,11 +17,6 @@ library (including the competing aggregators) used in the study.
 
 ```
 BayeSPeer/
-├── R/                          # Core method API (clean, user-facing)
-│   ├── utils.R                 #   rank-format conversions, init & tuning helpers
-│   ├── data_generation.R       #   synthetic data generators
-│   ├── metrics.R               #   Top-1 / Top-3 accuracy
-│   └── BayeSPeer_core.r        #   BayeSPeer() sampler + bayespeer_2step() wrapper
 ├── analysis/                   # Full function library (modular), used in the study
 │   ├── dependencies.R          #   package loads (source this first)
 │   ├── utils.R                 #   rank conversions, calculation & Inverse-Gamma helpers
@@ -37,42 +32,54 @@ BayeSPeer/
 └── README.md
 ```
 
-> **Note on file names.** The core file is `R/BayeSPeer_core.r` (lower-case
-> `.r`). On case-sensitive systems use that exact name in `source()`.
+> **Note on file names.** The core file is `analysis/bayespeer_core.r`
+> (lower-case name, lower-case `.r` extension). On case-sensitive systems use
+> that exact name in `source()`.
 
 ---
 
-## Core API (`R/`)
+## Core API (`analysis/bayespeer_core.r`)
 
 ### Bayesian rank aggregation
-- **`BayeSPeer()`** — main Gibbs sampler; returns posterior summaries of the
-  latent performance scores, self-evaluation bias, and variance components.
+- **`BayeSPeer()`** — main Gibbs sampler (Inverse-Gamma priors); returns
+  posterior summaries of the latent performance scores, self-evaluation bias,
+  and variance components.
+- **`BayeSPeer.pre()`** — same sampler, but additionally returns the full
+  MCMC draws (useful for diagnostics and hyper-prior tuning).
 - **`bayespeer_2step()`** — two-stage procedure that first runs a pilot chain
-  with diffuse hyper-priors to estimate scale parameters, then fits the final
-  model with empirically tuned hyper-priors.
+  of `BayeSPeer.pre()` with diffuse hyper-priors to estimate scale parameters,
+  then fits the final model with empirically tuned hyper-priors.
+- **`BayeSPeer.HC()` / `BayeSPeer.pre.HC()`** (`sampler_half_cauchy.R`) —
+  half-Cauchy prior variant of the variance components.
 
-### Data generation (simulations)
+### Data generation (simulations, `data_generation.R`)
 - **`gen_data_dir()`** — Normal latent effects
-- **`gen_data_t()`** — heavy-tailed (t-distributed) latent effects, rescaled to unit variance
-- **`gen_data_gamma()`** — skewed positive latent effects (unit variance)
+- **`gen_data_mix()`** — Normal latent effects with ranker-specific noise levels
+- **`gen_data_t()`** — heavy-tailed (t-distributed) latent effects, rescaled to
+  unit variance (requires the `df` argument)
+- **`gen_data_gamma()`** — skewed positive latent effects
+- **`gen_data_tri()`** — tri-modal self-evaluation bias
+  (over-/un-/under-confident ranker types)
 
 Each generator simulates latent utilities, converts them to observed ranks, and
-regenerates data if the resulting rankings are degenerate.
+regenerates the data in the degenerate case where all rows of the resulting
+rank matrix coincide.
 
 ### Rank utilities & evaluation
 - Conversion between rank matrices, ordinal lists, and numeric rankings
 - Self-rank vs. peer-rank diagnostics; latent-utility initialization
-- Top-1 and Top-3 accuracy metrics
+- Top-1 / Top-3 accuracy and rank-distance metrics
 
 ---
 
 ## Quick start
 
 ```r
-source("R/utils.R")
-source("R/data_generation.R")
-source("R/metrics.R")
-source("R/BayeSPeer_core.r")
+source("analysis/dependencies.R")     # package loads — source this first
+source("analysis/utils.R")
+source("analysis/data_generation.R")
+source("analysis/metrics.R")
+source("analysis/bayespeer_core.r")
 
 set.seed(42)
 
@@ -96,16 +103,14 @@ A fuller, commented version is in
 
 ## Function library (`analysis/`)
 
-`R/` holds the clean, user-facing API. `analysis/` holds the complete function
-library used in the study, split into modules by concern (every function moved
-verbatim from the original code, logic unchanged):
+The library is split into modules by concern:
 
 - `dependencies.R` — loads the packages used by the library (source first);
 - `utils.R`, `data_generation.R`, `metrics.R` — shared helpers, the five data
   generators, and the accuracy/rank-distance metrics;
 - `bayespeer_core.r` — the Gibbs samplers under Inverse-Gamma priors
-  (`BayeSPeer.pre`, `BayeSPeer`) together with the `bayespeer()` sampler and the
-  two-step empirical-Bayes wrapper `bayespeer_2step()`;
+  (`BayeSPeer.pre`, `BayeSPeer`) together with the two-step empirical-Bayes
+  wrapper `bayespeer_2step()`;
 - `sampler_half_cauchy.R` — the half-Cauchy prior variant of the samplers;
 - `competing_methods.R` — the competing aggregators: the Borda-score family,
   BIRRA, and BiGER.
@@ -117,22 +122,36 @@ results are not distributed here.
 
 ## Dependencies
 
-Core API (`R/`): `MCMCpack`, `extraDistr`, `matrixStats`.
-Function library (`analysis/`) additionally uses: `TopKLists`, `expm`,
+`MCMCpack`, `extraDistr`, `matrixStats`, `truncnorm`, `TopKLists`, `expm`,
 `tidyverse`, `reshape2`.
 
 ```r
 install.packages(c(
-  "MCMCpack", "extraDistr", "matrixStats",
+  "MCMCpack", "extraDistr", "matrixStats", "truncnorm",
   "TopKLists", "expm", "tidyverse", "reshape2"
 ))
 ```
+
+`truncnorm` is called via `truncnorm::` inside the samplers, so it must be
+installed even though `dependencies.R` does not attach it.
+
+---
+
+## Reproducibility note
+
+BayeSPeer is a Monte Carlo method: posterior summaries carry Monte Carlo
+error and depend on the random-number seed, R version, and platform. The
+manuscript does not fix a seed, so small numerical differences from the
+reported results are expected when re-running the code; differences of this
+size do not affect the aggregated rankings or the substantive conclusions.
 
 ---
 
 ## Data & privacy
 
-No real data is distributed with this repository. The manuscript's real-world
-classroom application relies on identifiable student grade and peer-ranking
-records, which are **not** included here for privacy reasons. All code shipped
-in this repository runs on fully synthetic, simulated data.
+No real data is distributed with this repository; all code shipped here runs
+on fully synthetic, simulated data. The classroom data analysed in the
+manuscript were anonymized, and the resulting de-identified ranking matrices
+are reported in full in the manuscript. The underlying identifiable records
+(student identities and individual exam grades) are **not** available for
+privacy reasons.

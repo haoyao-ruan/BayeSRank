@@ -1,7 +1,7 @@
 # ============================================================================
 # data_generation.R — synthetic data generators
 # gen_data_dir / gen_data_mix / gen_data_t / gen_data_gamma / gen_data_tri.
-# Part of the BayeSPeer function library; logic unchanged from the original implementation.
+# Part of the BayeSPeer function library.
 # ============================================================================
 
 gen_data_dir <- function(
@@ -72,10 +72,10 @@ gen_data_mix <- function(
     
     # Each ranker gets their own rho drawn from U(0.15, 0.95)
     rhos <- runif(n, min = 0.15, max = 0.95)
-    sigma_epsilons <-  (1/rhos^2 - 1)
+    sigma2_epsilons <- (1/rhos^2 - 1)   # variances: sigma_j^2 = 1/rho_j^2 - 1
     
     # Build epsilon matrix column-by-column, one sigma per ranker (column)
-    epsilon <- sapply(sigma_epsilons, function(s) rnorm(n, mean = 0, sd = s))
+    epsilon <- sapply(sigma2_epsilons, function(s2) rnorm(n, mean = 0, sd = sqrt(s2)))
     
     diag_effects <- diag(beta)
     omega <- outer(mu, rep(1, n)) + diag_effects + epsilon  # Fully vectorized
@@ -102,7 +102,7 @@ gen_data_mix <- function(
         var_w = omega_var,
        # rhosq = rhosq,
         true_beta = beta,
-        sigma_epsilons = sigma_epsilons  # retained for inspection/debugging
+        sigma2_epsilons = sigma2_epsilons  # ranker noise variances, for inspection
       )
     }
   }
@@ -116,14 +116,14 @@ gen_data_t <- function(
     mu_beta,
     sigma_beta,
     sigma_epsilon,
-    df=df
+    df
 ) {
   regenerate <- TRUE  # Flag to control regeneration loop
   result <- NULL
   
   while (regenerate) {
     # Generate data
-    mu <- rt(n, df = df) * sqrt(df / (df - 2)) # Global team effects
+    mu <- rt(n, df = df) * sqrt((df - 2) / df) # Global team effects, rescaled to unit variance
     true_rank <- rank(-mu)
     
     beta <- rnorm(n, mean = mu_beta, sd = sigma_beta)
